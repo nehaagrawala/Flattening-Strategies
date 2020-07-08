@@ -1,0 +1,59 @@
+1. Mapping is easy, until…
+When we map simple values, it’s super easy —
+
+// Awesome Mapping
+const namesObservable = of('Pete', 'Mike');
+namesObservable.pipe(
+   map(name => `${name} is awesome!`)
+).subscribe(result => console.log(`${result}`));
+// CONSOLE:
+// Pete is awesome!
+// Mike is awesome!
+
+But things start to get confusing when we return an observable from the map function, and not just a simple value.
+
+// A FAKE SERVER OBJECT: 
+const http = {
+   getAwesomeMessagesObservable(name): Observable<string> { 
+      return of(`${name} is awesome! (msg #1)`, 
+                `${name} is awesome! (msg #2)`);
+   } 
+   // the "of" returns an observable 
+   // this particular one will produce 2 events
+}
+// FOR THE VALUE "Pete", ONCE WE SUBSCRIBE, THIS SHOULD RETURN:
+// Pete is awesome! (msg #1)
+// Pete is awesome! (msg #2)
+
+
+Then, when we want to connect it to our namesObservable to see all the awesome messages each person gets, we might try to do the following:
+// Awesome ajax mapping
+namesObservable.pipe(
+   map(name => http.getAwesomeMessagesObservable(name) )
+).subscribe(result => console.log(`${result}`));
+// CONSOLE:
+// [object Object]
+// [object Object]
+
+
+We fail because the result value in this case is what the getAwesomeMessagesObservable(name) method returns, and it is.. well…
+an observable!
+
+
+// Awesome ajax mapping
+namesObservable.pipe(
+   map(name => http.getAwesomeMessagesObservable(name) )
+).subscribe(resultObservable => { 
+   resultObservable.subscribe(result => console.log(`${result}`) )
+});
+// CONSOLE:
+// Pete is awesome (msg #1)
+// Pete is awesome (msg #2)
+// Mike is awesome (msg #1)
+// Mike is awesome (msg #2)
+
+
+
+Flattening - when map return the observable and we subscribe to it it will return observable. For that we have to subscribe it again is called Flattening.
+
+Flattening just means — “subscribing inside a subscribe”
