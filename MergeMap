@@ -1,0 +1,33 @@
+1. Merge - 
+const frameworkTweetsObservable = from(['Backbone', 'Angular'])
+frameworkTweetsObservable.pipe(
+  map(framework => getAgency(framework) ),
+  map(agency => agency.getRecruitsObservable() )
+).subscribe( recruitsObservable => {
+  recruitsObservable.subscribe(recruit => console.log(recruit));
+  
+  // this ^ is the important line, as this is the "merge" strategy
+});
+// CONSOLE:
+// Backbone Developer #1 
+// Backbone Developer #2
+// Angular Developer #1
+// Backbone Developer #3 (<-- still happening)
+// Angular Developer #2
+
+As we said, this is the merge strategy, we just keep subscribing to all the mapped recruits Observables.
+
+So we could easily refactor this code to use the mergeMap operator:
+
+frameworkTweetsObservable.pipe(
+  map(framework => getAgency(framework) ),
+  mergeMap(agency => agency.getRecruitsObservable() )
+).subscribe( recruit => console.log(recruit) );
+// CONSOLE:
+// *** "Backbone" tweet pops up *** 
+// Backbone Developer #1 
+// Backbone Developer #2
+// *** "Angular" tweet pops up ***
+// Angular Developer #1
+// Backbone Developer #3 (<-- still happening)
+// Angular Developer #2
