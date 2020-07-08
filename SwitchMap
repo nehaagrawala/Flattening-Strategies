@@ -1,0 +1,23 @@
+“What’s wrong with mergeMap?”
+
+I’m not saying it is wrong, if that’s what you’re intending to do in your code.
+But in our story, Kevin, the CEO (that’s me 😁), was just interested in getting only the developers who knew how to code in the latest technology.
+If we used this merge strategy, it would have caused a lot of unnecessary frustration for Kevin, because he would keep getting ALL recruits for ALL the frameworks, at the same time.
+To solve this problem, RxJS introduced the following operator…
+
+switchMap() — the “Fashion” operator
+
+With switchMap() we only care about the latest and greatest, AKA the hot new fashion. We really don’t care about the past.
+This is what our CEO wanted- to stop getting Backbone recruits arriving to his front door as soon as he learned about a new technology.
+
+frameworkTweetsObservable.pipe(
+  map(framework => getAgency(framework) ),
+  switchMap(agency => agency.getRecruitsObservable() )
+).subscribe( recruit => console.log(recruit) );
+// CONSOLE:
+// *** "Backbone" tweet pops up ***
+// Backbone Developer #1 
+// *** "Angular" tweet pops up ***
+// Angular Developer #1
+// Angular Developer #2
+// Angular Developer #3
