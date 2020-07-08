@@ -1,0 +1,22 @@
+concatMap() — the “Wait in line” operator
+
+If Kevin, our CEO, was polite (and had tons of spare time), he could have chosen to wait until he finished all the interviews with the Backbone developers, before he started interviewing the Angular developers.
+Even if he saw that Angular was the hot new framework, he would have waited until there were no more Backbone developers to interview.
+
+
+frameworkTweetsObservable.pipe(
+  map(framework => getAgency(framework) ),
+  concatMap(agency => agency.getRecruitsObservable() )
+).subscribe( recruit => console.log(recruit) );
+// CONSOLE:
+// *** "Backbone" tweet pops up ***
+// Backbone Developer #1 
+// *** "Angular" tweet pops up ***
+// Backbone Developer #2
+// Backbone Developer #3 <-- this is the last one
+// Angular Developer #1 <-- only now the Angular devs appear
+// Angular Developer #2
+// Angular Developer #3
+
+
+So concatMap() queues up the inner observables one after the other, and play their events in that order (subscribing to the next Observable in the queue, only when the last one is completed).
