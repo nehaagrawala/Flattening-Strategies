@@ -1,0 +1,22 @@
+exhaustMap() — the “Do not disturb!” operator
+
+So.. exhaustMap() … what is it?
+Let’s say Kevin popped in a few pills of Methylphenidate ( Ritalin ), and all of a sudden got new SUPER FOCUS ABILITIES.
+Meaning, that between Backbone interviews, he would completely ignore any new Framework tweet that came in his way.
+He would see new tweets, but decide not to do anything about them, he even completely forgot about them (they were gone forever, not saved in some queue like in the concatMap() example).
+Only after his backbone recruits interviews were done, then he could be open to listening to any new tweet and do something about it.
+So it might have looked something like the following —
+
+frameworkTweetsObservable.pipe(
+  map(framework => getAgency(framework) ),
+  exhaustMap(agency => agency.getRecruitsObservable() )
+).subscribe( recruit => console.log(recruit) );
+// CONSOLE:
+// *** "Backbone" tweet pops up ***
+// Backbone Developer #1 
+// *** "Angular" tweet pops up *** <-- is completely ignored
+// Backbone Developer #2
+// Backbone Developer #3 <-- this is the last one
+// (we never see any Angular developers, because the "Angular" tweet
+//  popped while the backbone observable was still alive)
+As you can see, the Angular recruits observable never even gets stored for later use, there is no queue!
